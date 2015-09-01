@@ -11,6 +11,11 @@
             YCoordinate = y;
         }
 
+        public override int GetHashCode()
+        {
+            return 0;
+        }
+
         public override bool Equals(object obj)
         {
             Coordinate otherCoordinate = obj as Coordinate;
@@ -20,6 +25,11 @@
 
             return otherCoordinate.XCoordinate == this.XCoordinate &&
                    otherCoordinate.YCoordinate == this.YCoordinate;
+        }
+
+        public override string ToString()
+        {
+            return XCoordinate + ", " + YCoordinate;
         }
     }
 }

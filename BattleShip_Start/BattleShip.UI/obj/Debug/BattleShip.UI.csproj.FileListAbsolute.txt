@@ -4,3 +4,11 @@ C:\_repos\August2015-DotNetAkron-Materials\Battleship\BattleShip_Start\BattleShi
 C:\_repos\August2015-DotNetAkron-Materials\Battleship\BattleShip_Start\BattleShip.UI\obj\Debug\BattleShip.UI.csprojResolveAssemblyReference.cache
 C:\_repos\August2015-DotNetAkron-Materials\Battleship\BattleShip_Start\BattleShip.UI\obj\Debug\BattleShip.UI.exe
 C:\_repos\August2015-DotNetAkron-Materials\Battleship\BattleShip_Start\BattleShip.UI\obj\Debug\BattleShip.UI.pdb
+C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.UI\bin\Debug\BattleShip.UI.exe.config
+C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.UI\obj\Debug\BattleShip.UI.exe
+C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.UI\obj\Debug\BattleShip.UI.pdb
+C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.UI\bin\Debug\BattleShip.UI.exe
+C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.UI\bin\Debug\BattleShip.UI.pdb
+C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.UI\bin\Debug\BattleShip.BLL.dll
+C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.UI\bin\Debug\BattleShip.BLL.pdb
+C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.UI\obj\Debug\BattleShip.UI.csprojResolveAssemblyReference.cache

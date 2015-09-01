@@ -11,5 +11,8 @@ namespace BattleShip.BLL.Responses
         Hit,
         Miss,
         Unknown
+
     }
+
+
 }
