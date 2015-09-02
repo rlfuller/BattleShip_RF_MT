@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Schema;
 using BattleShip.BLL.GameLogic;
+using System.Text.RegularExpressions;
 using BattleShip.BLL.Requests;
 using BattleShip.BLL.Responses;
 
@@ -129,42 +130,25 @@ namespace BattleShip.UI
         //Takes in a console line, validates it, and if successful returns a coord obj.
         static Coordinate inputToCoordinate()
         {
-            char[] validLetters1 = new[] {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+            string pattern = "^[A-Ja-j]{1}[1-9]{1}0?$";
+            Regex regex = new Regex(pattern);
+            
             Console.WriteLine("Please enter a letter (A-J) followed by a number 1-10.");
+
+            char[] validLetters1 = new[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+
             bool validInput = false;
             string input = "";
             int letterAJ = 0;
+
             while (!validInput)
             {
 
                 input = Console.ReadLine();
-
                 input = input.ToUpper();
 
-                if (!string.IsNullOrEmpty(input) && input.Length > 1)
+                if (regex.IsMatch(input))
                     validInput = true;
-                if (input.Length == 3 && input.Substring(1) == "10")
-                    validInput = true;
-                if (input.Length == 2)
-                    validInput = true;
-                
-                int validity = 0;
-                if (validInput)
-                {
-                    for (int i = 0; i < validLetters1.Length; i++)
-                    {
-
-                        if (input[0] == validLetters1[i])
-                        {
-                            validity++;
-                            letterAJ = i + 1;
-                            break;
-                        }
-                    }
-                }
-
-                if (validity != 1)
-                    validInput = false;
                 
                 if (!validInput)
                     Console.WriteLine("not valid");
