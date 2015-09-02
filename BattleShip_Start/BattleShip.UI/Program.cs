@@ -118,7 +118,6 @@ namespace BattleShip.UI
             }
         }
 
-
         static void drawPlacementBoard(Game game, int counter)
         {
             //Take the board of the player whose turn it is.
@@ -173,7 +172,7 @@ namespace BattleShip.UI
 
             Console.WriteLine("{0}, place your ships.", game.Player1Name);
 
-            int counter = 0;
+            int counter = 1;
             foreach (ShipType ship in Enum.GetValues(typeof(ShipType)))
             {
                 Console.WriteLine("You will be placing a {0}",ship.ToString() );
@@ -183,19 +182,20 @@ namespace BattleShip.UI
                 
                 Console.WriteLine("Now enter the direction to place the {0}. Values are D, U, L, R.", ship);
                 
-
                 ShipDirection direction = directionInput();
+
+                PlaceShipRequest ShipRequest = new PlaceShipRequest(coord, direction, ship);
 
                 if (isPlayer1)
                 {
-                    game.p1Board.PlaceShip(new PlaceShipRequest(coord, direction, ship));
+                    game.p1Board.PlaceShip(ShipRequest);
              //       Console.Clear();
                     drawPlacementBoard(game, counter);
                     counter++;
                 }
                 else
                 {
-                    game.p2Board.PlaceShip(new PlaceShipRequest(coord, direction, ship));
+                    game.p2Board.PlaceShip(ShipRequest);
              //       Console.Clear();
                     drawPlacementBoard(game, counter);
                     counter++;
@@ -281,7 +281,7 @@ namespace BattleShip.UI
                 Console.WriteLine("not valid");
             }
             
-            return new Coordinate(letterAJ, int.Parse(input.Substring(1)));
+            return new Coordinate(int.Parse(input.Substring(1)), letterAJ);
             
         }
 
