@@ -8,3 +8,8 @@ C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.BLL\bin\Debug\BattleShip.
 C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.BLL\obj\Debug\BattleShip.BLL.csprojResolveAssemblyReference.cache
 C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.BLL\obj\Debug\BattleShip.BLL.dll
 C:\_repos\BattleShip_RF_MT\BattleShip_Start\BattleShip.BLL\obj\Debug\BattleShip.BLL.pdb
+C:\_repos\BattleShip - RF - MT\BattleShip_Start\BattleShip.BLL\bin\Debug\BattleShip.BLL.dll
+C:\_repos\BattleShip - RF - MT\BattleShip_Start\BattleShip.BLL\bin\Debug\BattleShip.BLL.pdb
+C:\_repos\BattleShip - RF - MT\BattleShip_Start\BattleShip.BLL\obj\Debug\BattleShip.BLL.csprojResolveAssemblyReference.cache
+C:\_repos\BattleShip - RF - MT\BattleShip_Start\BattleShip.BLL\obj\Debug\BattleShip.BLL.dll
+C:\_repos\BattleShip - RF - MT\BattleShip_Start\BattleShip.BLL\obj\Debug\BattleShip.BLL.pdb

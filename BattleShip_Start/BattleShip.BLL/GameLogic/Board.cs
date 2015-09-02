@@ -20,6 +20,12 @@ namespace BattleShip.BLL.GameLogic
             _currentShipIndex = 0;
         }
 
+        //return position to visualize ships when placing ships
+        public Coordinate[] findShip(int Index)
+        {
+            return _ships[Index].BoardPositions;
+        }
+
         public FireShotResponse FireShot(Coordinate coordinate)
         {
             var response = new FireShotResponse();

@@ -1,4 +1,6 @@
-﻿namespace BattleShip.BLL.Requests
+﻿using System;
+
+namespace BattleShip.BLL.Requests
 {
     public class Coordinate
     {
@@ -11,9 +13,11 @@
             YCoordinate = y;
         }
 
+       
         public override int GetHashCode()
         {
-            return 0;
+            string uniqueHash = this.XCoordinate.ToString() + this.YCoordinate.ToString() + "00";
+            return (Convert.ToInt32(uniqueHash));
         }
 
         public override bool Equals(object obj)

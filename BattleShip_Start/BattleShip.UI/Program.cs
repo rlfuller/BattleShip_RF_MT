@@ -8,6 +8,7 @@ using BattleShip.BLL.GameLogic;
 using System.Text.RegularExpressions;
 using BattleShip.BLL.Requests;
 using BattleShip.BLL.Responses;
+using BattleShip.BLL.Ships;
 
 namespace BattleShip.UI
 {
@@ -16,12 +17,11 @@ namespace BattleShip.UI
 
         public static void Main(string[] args)
         {
-            //Game game = setup();
-            while (true)
-            {
-                Console.WriteLine(inputToCoordinate().ToString());
-            }
+            Game game = setup();
+
+            shipPlacement(game, true);
             
+
             Console.ReadLine();
 
         }
@@ -118,24 +118,142 @@ namespace BattleShip.UI
             }
         }
 
-        static void shipPlacement(Game game)
+
+        static void drawPlacementBoard(Game game, int counter)
+        {
+            //Take the board of the player whose turn it is.
+            Board currentBoard = game.p2Board;
+            if (game.isPlayer1Turn)
+            {
+                currentBoard = game.p1Board;
+            }
+            //new dictionary that holds ships positions
+            List<Coordinate> shipPosition = new List<Coordinate>();
+
+            for (int i = 0; i < counter; i++)
+            {
+                Coordinate[] ship = currentBoard.findShip(i);
+
+                //get all the coordinates for each ship that has been placed
+                foreach (Coordinate element in ship)
+                {
+                    shipPosition.Add(element); 
+                }
+            }
+
+            //compare coordinate of placed ships to dictionary, if match,draw ship
+            for (int i = 1; i <= 10; i++)
+            {
+                int lineBreakCounter = 0;
+                for (int j = 1; j <= 10; j++)
+                {
+                    Coordinate coord = new Coordinate(i, j);
+                    if (shipPosition.Contains(coord))
+                    {
+                        Console.Write(" S ");
+                        lineBreakCounter++;
+                    }
+                    else
+                    {
+                        Console.Write( " X " );
+                        lineBreakCounter++;
+                    }
+
+                    if (lineBreakCounter >= 10)
+                    {
+                        Console.WriteLine("");
+                    }
+                }
+            }
+        }
+
+        static void shipPlacement(Game game, bool isPlayer1)
         {
             drawBoard(game);
 
             Console.WriteLine("{0}, place your ships.", game.Player1Name);
-            
 
+            int counter = 0;
+            foreach (ShipType ship in Enum.GetValues(typeof(ShipType)))
+            {
+                Console.WriteLine("You will be placing a {0}",ship.ToString() );
+                Console.WriteLine("Enter your coordinates for this ship.");
+
+                Coordinate coord = inputToCoordinate();
+                
+                Console.WriteLine("Now enter the direction to place the {0}. Values are D, U, L, R.", ship);
+                
+
+                ShipDirection direction = directionInput();
+
+                if (isPlayer1)
+                {
+                    game.p1Board.PlaceShip(new PlaceShipRequest(coord, direction, ship));
+             //       Console.Clear();
+                    drawPlacementBoard(game, counter);
+                    counter++;
+                }
+                else
+                {
+                    game.p2Board.PlaceShip(new PlaceShipRequest(coord, direction, ship));
+             //       Console.Clear();
+                    drawPlacementBoard(game, counter);
+                    counter++;
+                }
+            }
+        }
+
+        //validates ship direction from player
+        private static ShipDirection directionInput()
+        {
+            string userDirection = "";
+            bool isDirectionValid = false;
+            ShipDirection result = ShipDirection.Down; 
+          
+
+            while (!isDirectionValid)
+            {
+                userDirection = Console.ReadLine();
+                userDirection = userDirection.ToUpper();
+                
+                    switch (userDirection)
+                    {
+                        case "D":
+                            result = ShipDirection.Down;
+                            isDirectionValid = true;
+                            break;
+                        case "L":
+                            result =  ShipDirection.Left;
+                            isDirectionValid = true;
+                            break;
+                        case "R":
+                            result = ShipDirection.Right;
+                            isDirectionValid = true;
+                            break;
+                        case "U":
+                            result =  ShipDirection.Up;
+                            isDirectionValid = true;
+                            break;
+                    }
+                   Console.WriteLine("Input not valid. Please type a single character: U D L R"); 
+            }
+            return result;
         }
 
         //Takes in a console line, validates it, and if successful returns a coord obj.
         static Coordinate inputToCoordinate()
         {
-            string pattern = "^[A-Ja-j]{1}[1-9]{1}0?$";
-            Regex regex = new Regex(pattern);
+            string pattern1 = "^[A-Ja-j]{1}[1-9]$";
+
+            string pattern2 = "^[A-Ja-j]{1}[1][0]$";
+
+            Regex regex1 = new Regex(pattern1);
+            Regex regex2 = new Regex(pattern2);
             
+
             Console.WriteLine("Please enter a letter (A-J) followed by a number 1-10.");
 
-            char[] validLetters1 = new[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+            char[] validLetters1 = new[] {'X', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
 
             bool validInput = false;
             string input = "";
@@ -147,17 +265,27 @@ namespace BattleShip.UI
                 input = Console.ReadLine();
                 input = input.ToUpper();
 
-                if (regex.IsMatch(input))
+                if (regex2.IsMatch(input) || regex1.IsMatch(input))
+                {
                     validInput = true;
-                
-                if (!validInput)
-                    Console.WriteLine("not valid");
+                    for (int i = 1; i < validLetters1.Length; i++)
+                    {
+                        if (input[0] == validLetters1[i])
+                        {
+                            letterAJ = i;
+                        }
+                    }
+                }
+
+                else
+                Console.WriteLine("not valid");
             }
             
             return new Coordinate(letterAJ, int.Parse(input.Substring(1)));
             
         }
 
+        
         
     }
 }
