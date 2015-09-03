@@ -10,7 +10,8 @@ namespace BattleShip.BLL.Responses
     {
         Hit,
         Miss,
-        Unknown
+        Unknown,
+        X
 
     }
 

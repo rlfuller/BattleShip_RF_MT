@@ -23,6 +23,11 @@ namespace BattleShip.UI
             Player2Name = p2name;
             isPlayer1Turn = true;
         }
+
+        public void TurnToggle()
+        {
+            isPlayer1Turn = !isPlayer1Turn;
+        }
         
 
     }

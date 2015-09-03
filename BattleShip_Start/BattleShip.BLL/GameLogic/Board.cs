@@ -114,12 +114,14 @@ namespace BattleShip.BLL.GameLogic
             Ship newShip = ShipCreator.CreateShip(request.ShipType);
             switch (request.Direction)
             {
-                case ShipDirection.Down:
+                case ShipDirection.Right:
                     return PlaceShipDown(request.Coordinate, newShip);
-                case ShipDirection.Up:
-                    return PlaceShipUp(request.Coordinate, newShip);
                 case ShipDirection.Left:
+                    return PlaceShipUp(request.Coordinate, newShip);
+                case ShipDirection.Up:
                     return PlaceShipLeft(request.Coordinate, newShip);
+                case ShipDirection.Down:
+                    return PlaceShipRight(request.Coordinate, newShip);
                 default:
                     return PlaceShipRight(request.Coordinate, newShip);
             }

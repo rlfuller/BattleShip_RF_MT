@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Schema;
 using BattleShip.BLL.GameLogic;
 using System.Text.RegularExpressions;
+using System.Threading;
 using BattleShip.BLL.Requests;
 using BattleShip.BLL.Responses;
 using BattleShip.BLL.Ships;
@@ -17,17 +18,57 @@ namespace BattleShip.UI
 
         public static void Main(string[] args)
         {
-            Game game = setup();
-
-            shipPlacement(game, true);
-            
+            Console.BackgroundColor = ConsoleColor.DarkCyan;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Clear();
+            Console.WriteLine(@"     .  o ..                  ");
+            Console.WriteLine(@"     o . o o.o                ");
+            Console.WriteLine(@"          ...oo               ");
+            Console.WriteLine(@"            __[]__            ");
+            Console.WriteLine(@"         __|_o_o_o\__         ");
+            Console.WriteLine(@"         \**********/         ");
+            Console.WriteLine(@"          \. ..  . /          ");
+            Console.WriteLine(@"     ^^^^^^^^^^^^^^^^^^^^     ");
+            Console.WriteLine();
+            Console.WriteLine(@"     WELCOME TO BATTLESHIP     ");
+            Console.WriteLine(@"       press START button      ");
 
             Console.ReadLine();
+
+            Console.Clear();
+
+            bool loop = false;
+
+            while (!loop)
+            {
+                Game game = setup();
+
+                for (int i = 0; i < 2; i++)
+                {
+                    shipPlacement(game, true);
+                    game.TurnToggle();
+                    Console.Clear();
+                }
+
+                Console.WriteLine("Ship placement done. " + game.Player1Name + " will now begin his turn.");
+
+                bool gameOver = false;
+                while (!gameOver)
+                {
+                    gameOver = runOneTurn(game);
+                    game.TurnToggle();
+                }
+                Console.ReadLine();
+
+                Console.WriteLine("Would you like to play again? Type \"yes\" to play again. Any other input to quit");
+
+                loop = Console.ReadLine().ToLower() == "yes";
+            }
 
         }
 
 
-        static Game setup()
+        private static Game setup()
         {
             Console.WriteLine("Welcome to Battleship (start order will be randomized).");
             Console.WriteLine("Please enter the first name.");
@@ -45,7 +86,7 @@ namespace BattleShip.UI
                 p1Name = p2Name;
                 p2Name = temp;
             }
-            
+
             Game game = new Game(p1Name, p2Name);
 
 
@@ -56,69 +97,79 @@ namespace BattleShip.UI
             return game;
 
         }
-        
-        //Creates 100 coordinates for each board
-        static void intializeBoard(Game game)
-        {
-            
-            //initialize dictionary inside game object, need to initialize for each board
-            for (int i = 1; i <= 10; i++)
-            {
-                for (int j = 1; j <= 10; j++)
-                {
-                    Coordinate coord = new Coordinate(i, j);
-                    game.p1Board.ShotHistory.Add(coord, ShotHistory.Unknown);
-                    game.p2Board.ShotHistory.Add(coord, ShotHistory.Unknown);
-                }
-            }
 
-            
+        //Creates 100 coordinates for each board
+        private static void intializeBoard(Game game)
+        {
+
+            //initialize dictionary inside game object, need to initialize for each board
+            //for (int i = 1; i <= 10; i++)
+            //{
+            //    for (int j = 1; j <= 10; j++)
+            //    {
+            //        Coordinate coord = new Coordinate(i, j);
+            //        game.p1Board.ShotHistory.Add(coord, ShotHistory.X);
+            //        game.p2Board.ShotHistory.Add(coord, ShotHistory.X);
+            //    }
+            //}
+
+
         }
 
         //Draw the hit history on the console
-        static void drawBoard(Game game)
+        private static void drawBoard(Game game)
         {
             //Take the board of the player whose turn it is.
-            Dictionary<Coordinate, ShotHistory> currentHistory = game.p1Board.ShotHistory;
+            Dictionary<Coordinate, ShotHistory> currentHistory = game.p2Board.ShotHistory;
             if (game.isPlayer1Turn)
             {
-                currentHistory = game.p2Board.ShotHistory;
+                currentHistory = game.p1Board.ShotHistory;
             }
-            
 
+            Console.WriteLine(" A  B  C  D  E  F  G  H  I  J ");
             for (int i = 1; i <= 10; i++)
             {
                 int lineBreakCounter = 0;
                 for (int j = 1; j <= 10; j++)
                 {
                     Coordinate coord = new Coordinate(i, j);
-                    switch (currentHistory[coord])
+                    if (!currentHistory.ContainsKey(coord))
                     {
-                        case ShotHistory.Hit:
-                            Console.Write(" H ");
-                            lineBreakCounter ++;
-                            break;
-                        case ShotHistory.Miss:
-                            Console.Write(" M ");
-                            lineBreakCounter ++;
-                            break;
-                        case ShotHistory.Unknown:
-                            Console.Write(" X ");
-                            lineBreakCounter ++;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                        Console.Write(" . ");
+                        lineBreakCounter++;
+                    }
+                    else
+                    {
+                        switch (currentHistory[coord])
+                        {
+                            case ShotHistory.Hit:
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.Write(" H ");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                lineBreakCounter++;
+                                break;
+                            case ShotHistory.Miss:
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.Write(" M ");
+                                Console.ForegroundColor = ConsoleColor.White;
+                                lineBreakCounter++;
+                                break;
+                            default:
+                                Console.Write(" . ");
+                                lineBreakCounter++;
+                                break;
+                        }
                     }
 
                     if (lineBreakCounter >= 10)
                     {
-                        Console.WriteLine("");
+                        Console.WriteLine("  " + i);
                     }
                 }
             }
         }
 
-        static void drawPlacementBoard(Game game, int counter)
+        private static void drawPlacementBoard(Game game, int counter)
         {
             //Take the board of the player whose turn it is.
             Board currentBoard = game.p2Board;
@@ -136,11 +187,12 @@ namespace BattleShip.UI
                 //get all the coordinates for each ship that has been placed
                 foreach (Coordinate element in ship)
                 {
-                    shipPosition.Add(element); 
+                    shipPosition.Add(element);
                 }
             }
 
             //compare coordinate of placed ships to dictionary, if match,draw ship
+            Console.WriteLine(" A  B  C  D  E  F  G  H  I  J ");
             for (int i = 1; i <= 10; i++)
             {
                 int lineBreakCounter = 0;
@@ -149,57 +201,78 @@ namespace BattleShip.UI
                     Coordinate coord = new Coordinate(i, j);
                     if (shipPosition.Contains(coord))
                     {
+                        Console.ForegroundColor = ConsoleColor.Black;
                         Console.Write(" S ");
+                        Console.ForegroundColor = ConsoleColor.White;
                         lineBreakCounter++;
                     }
                     else
                     {
-                        Console.Write( " X " );
+                        Console.Write(" . ");
                         lineBreakCounter++;
                     }
 
                     if (lineBreakCounter >= 10)
                     {
-                        Console.WriteLine("");
+                        Console.WriteLine("  " + i);
                     }
                 }
             }
         }
 
-        static void shipPlacement(Game game, bool isPlayer1)
+        private static Board getCurrentPlayer(Game game)
+        {
+            Board board = game.p1Board;
+            if (!game.isPlayer1Turn)
+                board = game.p2Board;
+            return board;
+        }
+
+        private static void shipPlacement(Game game, bool isPlayer1)
         {
             drawBoard(game);
 
+            Console.WriteLine();
             Console.WriteLine("{0}, place your ships.", game.Player1Name);
 
             int counter = 1;
-            foreach (ShipType ship in Enum.GetValues(typeof(ShipType)))
+            foreach (ShipType ship in Enum.GetValues(typeof (ShipType)))
             {
-                Console.WriteLine("You will be placing a {0}",ship.ToString() );
+                Board board = getCurrentPlayer(game);
+                Console.WriteLine("You will be placing a {0}", ship.ToString());
                 Console.WriteLine("Enter your coordinates for this ship.");
 
-                Coordinate coord = inputToCoordinate();
-                
-                Console.WriteLine("Now enter the direction to place the {0}. Values are D, U, L, R.", ship);
-                
-                ShipDirection direction = directionInput();
-
-                PlaceShipRequest ShipRequest = new PlaceShipRequest(coord, direction, ship);
-
-                if (isPlayer1)
+                bool validPlacement = false;
+                while (!validPlacement)
                 {
-                    game.p1Board.PlaceShip(ShipRequest);
-             //       Console.Clear();
-                    drawPlacementBoard(game, counter);
-                    counter++;
+                    Coordinate coord = inputToCoordinate();
+
+                    Console.WriteLine("Now enter the direction to place the {0}. Values are D, U, L, R.", ship);
+
+                    ShipDirection direction = directionInput();
+
+
+                    PlaceShipRequest ShipRequest = new PlaceShipRequest(coord, direction, ship);
+                    switch (board.PlaceShip(ShipRequest))
+                    {
+                        case ShipPlacement.NotEnoughSpace:
+                            Console.WriteLine("Not enough space to place the ship. Please enter a new coordinate.");
+                            break;
+                        case ShipPlacement.Overlap:
+                            Console.WriteLine(
+                                "This placement would overlap another ship. Please enter a new coordinate.");
+                            break;
+                        case ShipPlacement.Ok:
+                            validPlacement = true;
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
-                else
-                {
-                    game.p2Board.PlaceShip(ShipRequest);
-             //       Console.Clear();
-                    drawPlacementBoard(game, counter);
-                    counter++;
-                }
+
+                Console.Clear();
+                drawPlacementBoard(game, counter);
+                counter++;
             }
         }
 
@@ -208,40 +281,43 @@ namespace BattleShip.UI
         {
             string userDirection = "";
             bool isDirectionValid = false;
-            ShipDirection result = ShipDirection.Down; 
-          
+            ShipDirection result = ShipDirection.Down;
+
 
             while (!isDirectionValid)
             {
                 userDirection = Console.ReadLine();
                 userDirection = userDirection.ToUpper();
-                
-                    switch (userDirection)
-                    {
-                        case "D":
-                            result = ShipDirection.Down;
-                            isDirectionValid = true;
-                            break;
-                        case "L":
-                            result =  ShipDirection.Left;
-                            isDirectionValid = true;
-                            break;
-                        case "R":
-                            result = ShipDirection.Right;
-                            isDirectionValid = true;
-                            break;
-                        case "U":
-                            result =  ShipDirection.Up;
-                            isDirectionValid = true;
-                            break;
-                    }
-                   Console.WriteLine("Input not valid. Please type a single character: U D L R"); 
+
+                switch (userDirection)
+                {
+                    case "D":
+                        result = ShipDirection.Down;
+                        isDirectionValid = true;
+                        break;
+                    case "L":
+                        result = ShipDirection.Left;
+                        isDirectionValid = true;
+                        break;
+                    case "R":
+                        result = ShipDirection.Right;
+                        isDirectionValid = true;
+                        break;
+                    case "U":
+                        result = ShipDirection.Up;
+                        isDirectionValid = true;
+                        break;
+                    default:
+                        Console.WriteLine("Input not valid. Please type a single character: U D L R");
+                        break;
+                }
+
             }
             return result;
         }
 
         //Takes in a console line, validates it, and if successful returns a coord obj.
-        static Coordinate inputToCoordinate()
+        private static Coordinate inputToCoordinate()
         {
             string pattern1 = "^[A-Ja-j]{1}[1-9]$";
 
@@ -249,11 +325,11 @@ namespace BattleShip.UI
 
             Regex regex1 = new Regex(pattern1);
             Regex regex2 = new Regex(pattern2);
-            
+
 
             Console.WriteLine("Please enter a letter (A-J) followed by a number 1-10.");
 
-            char[] validLetters1 = new[] {'X', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+            char[] validLetters1 = new[] {'X', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
 
             bool validInput = false;
             string input = "";
@@ -261,7 +337,6 @@ namespace BattleShip.UI
 
             while (!validInput)
             {
-
                 input = Console.ReadLine();
                 input = input.ToUpper();
 
@@ -278,14 +353,62 @@ namespace BattleShip.UI
                 }
 
                 else
-                Console.WriteLine("not valid");
+                    Console.WriteLine("not valid");
             }
-            
+
             return new Coordinate(int.Parse(input.Substring(1)), letterAJ);
-            
         }
 
-        
-        
+        private static bool runOneTurn(Game game)
+        {
+            Console.Clear();
+            
+            Board board = getCurrentPlayer(game);
+
+            drawBoard(game);
+
+            Console.WriteLine("{0} enter a coordinate for your shot.", game.Player1Name);
+
+            bool validShot = false;
+
+            while (!validShot)
+            {
+                Coordinate coord = inputToCoordinate();
+
+                FireShotResponse currentShot = board.FireShot(coord);
+
+                drawBoard(game);
+
+                switch (currentShot.ShotStatus)
+                {
+                    case ShotStatus.Invalid:
+                        throw new Exception("Invalid should be handled by the coordinate input. FIX THIS");
+                    case ShotStatus.Duplicate:
+                        Console.WriteLine("You have already tried that coordinate!");
+                        break;
+                    case ShotStatus.Miss:
+                        Console.WriteLine("You Missed!");
+                        validShot = true;
+                        break;
+                    case ShotStatus.Hit:
+                        Console.WriteLine("You hit a {0}!", currentShot.ShipImpacted);
+                        validShot = true;
+                        break;
+                    case ShotStatus.HitAndSunk:
+                        Console.WriteLine("You hit and sunk a {0}!", currentShot.ShipImpacted);
+                        validShot = true;
+                        break;
+                    case ShotStatus.Victory:
+                        Console.WriteLine("You hit and sunk a {0}! That was your opponent last ship.", currentShot.ShipImpacted);
+                        Console.ReadLine();
+                        return true;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                Console.ReadLine();
+            }
+            return false;
+        }
     }
 }
