@@ -37,9 +37,9 @@ namespace BattleShip.UI
 
             Console.Clear();
 
-            bool loop = false;
+            bool loop = true;
 
-            while (!loop)
+            while (loop)
             {
                 Game game = setup();
 
@@ -62,7 +62,8 @@ namespace BattleShip.UI
 
                 Console.WriteLine("Would you like to play again? Type \"yes\" to play again. Any other input to quit");
 
-                loop = Console.ReadLine().ToLower() == "yes";
+                if (Console.ReadLine().ToLower() != "yes")
+                    loop = false;
             }
 
         }
@@ -89,36 +90,29 @@ namespace BattleShip.UI
 
             Game game = new Game(p1Name, p2Name);
 
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write(p1Name);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write( " will be Player 1. ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write(p2Name);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" will be Player 2.");
+            Console.WriteLine();
 
-            Console.WriteLine(p1Name + " will be Player 1. " + p2Name + " will be Player 2.");
 
-            intializeBoard(game);
+            Console.WriteLine("Any key to continue.");
 
+            Console.ReadLine();
+            Console.Clear();
             return game;
 
         }
 
-        //Creates 100 coordinates for each board
-        private static void intializeBoard(Game game)
-        {
-
-            //initialize dictionary inside game object, need to initialize for each board
-            //for (int i = 1; i <= 10; i++)
-            //{
-            //    for (int j = 1; j <= 10; j++)
-            //    {
-            //        Coordinate coord = new Coordinate(i, j);
-            //        game.p1Board.ShotHistory.Add(coord, ShotHistory.X);
-            //        game.p2Board.ShotHistory.Add(coord, ShotHistory.X);
-            //    }
-            //}
-
-
-        }
-
-        //Draw the hit history on the console
+       //Draw the hit history on the console
         private static void drawBoard(Game game)
         {
+            Console.WriteLine();
             //Take the board of the player whose turn it is.
             Dictionary<Coordinate, ShotHistory> currentHistory = game.p2Board.ShotHistory;
             if (game.isPlayer1Turn)
@@ -171,6 +165,7 @@ namespace BattleShip.UI
 
         private static void drawPlacementBoard(Game game, int counter)
         {
+            Console.WriteLine();
             //Take the board of the player whose turn it is.
             Board currentBoard = game.p2Board;
             if (game.isPlayer1Turn)
@@ -233,12 +228,15 @@ namespace BattleShip.UI
             drawBoard(game);
 
             Console.WriteLine();
-            Console.WriteLine("{0}, place your ships.", game.Player1Name);
+            Console.Write("Place your ships, ");
+            playerNameColor(game);
+            Console.WriteLine();
 
             int counter = 1;
             foreach (ShipType ship in Enum.GetValues(typeof (ShipType)))
             {
                 Board board = getCurrentPlayer(game);
+                Console.WriteLine();
                 Console.WriteLine("You will be placing a {0}", ship.ToString());
                 Console.WriteLine("Enter your coordinates for this ship.");
 
@@ -326,7 +324,7 @@ namespace BattleShip.UI
             Regex regex1 = new Regex(pattern1);
             Regex regex2 = new Regex(pattern2);
 
-
+            Console.WriteLine();
             Console.WriteLine("Please enter a letter (A-J) followed by a number 1-10.");
 
             char[] validLetters1 = new[] {'X', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
@@ -353,10 +351,19 @@ namespace BattleShip.UI
                 }
 
                 else
-                    Console.WriteLine("not valid");
+                    Console.WriteLine("Input not valid.");
             }
 
             return new Coordinate(int.Parse(input.Substring(1)), letterAJ);
+        }
+
+        private static void playerNameColor(Game game)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            if (game.isPlayer1Turn)
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write(game.Player1Name);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         private static bool runOneTurn(Game game)
@@ -367,13 +374,16 @@ namespace BattleShip.UI
 
             drawBoard(game);
 
-            Console.WriteLine("{0} enter a coordinate for your shot.", game.Player1Name);
+            Console.WriteLine();
+            playerNameColor(game);
+            Console.Write(" enter a coordinate for your shot.");
 
             bool validShot = false;
 
             while (!validShot)
             {
                 Coordinate coord = inputToCoordinate();
+                Console.Clear();
 
                 FireShotResponse currentShot = board.FireShot(coord);
 
@@ -384,29 +394,39 @@ namespace BattleShip.UI
                     case ShotStatus.Invalid:
                         throw new Exception("Invalid should be handled by the coordinate input. FIX THIS");
                     case ShotStatus.Duplicate:
+                        Console.WriteLine();
                         Console.WriteLine("You have already tried that coordinate!");
                         break;
                     case ShotStatus.Miss:
+                        Console.WriteLine();
                         Console.WriteLine("You Missed!");
+                        Console.ReadLine();
                         validShot = true;
                         break;
                     case ShotStatus.Hit:
+                        Console.WriteLine();
                         Console.WriteLine("You hit a {0}!", currentShot.ShipImpacted);
+                        Console.ReadLine();
                         validShot = true;
                         break;
                     case ShotStatus.HitAndSunk:
+                        Console.WriteLine();
                         Console.WriteLine("You hit and sunk a {0}!", currentShot.ShipImpacted);
+                        Console.ReadLine();
                         validShot = true;
                         break;
                     case ShotStatus.Victory:
+                        Console.WriteLine();
                         Console.WriteLine("You hit and sunk a {0}! That was your opponent last ship.", currentShot.ShipImpacted);
-                        Console.ReadLine();
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("Good job, ");
+                        playerNameColor(game);
+                        Console.Write("!");
+                        Console.WriteLine();
                         return true;
-                        break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-                Console.ReadLine();
             }
             return false;
         }
