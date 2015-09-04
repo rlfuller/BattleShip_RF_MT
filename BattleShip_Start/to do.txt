@@ -1,0 +1,26 @@
+*- console.writeline() before "you will be placing a" ....
+*- format "not valid"
+*- color player names in "enter a coordinate for your shot"
+*- writeline() before "enter a coordinate for you shot"
+*- Console.clear after entering a valid/not valid/missed shot
+*- writeline() before "you hit a..." + "you hit and sunk a..."
+*- writeline() before "you have already tried that coord..."
+*- remove readline() after the line above
+*- color player names in "place your ships"
+*- space before "please enter a letter" + split the line at please.
+*- remove 1 readline after last ship sunk
+*- add congrats message after sinking last ship + fix "opponent's ship"
+
+
+IMPORTANT
+*- fix console.clear placement
+*- fix shooting twice at the same spot
+* display the two boards at once
+* move all the methods to game.cs
+* when placing ships, use the correct grid method!
+
+minor:
+
+*move splash screen to the center.
+*add player names at the top of each grid
+*change color for player1

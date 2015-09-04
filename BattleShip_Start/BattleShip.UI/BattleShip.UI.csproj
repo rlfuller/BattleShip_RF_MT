@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="BattleshipDeluxe.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="validLetters.cs" />
   </ItemGroup>
